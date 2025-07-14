@@ -1,5 +1,4 @@
 import { FlatCompat } from '@eslint/eslintrc';
-import { Quote } from 'lucide-react';
 
 const compat = new FlatCompat({ baseDirectory: import.meta.dirname });
 
