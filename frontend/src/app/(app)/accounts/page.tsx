@@ -2,6 +2,6 @@
 
 import { FeatureUnderConstruction } from '@/components/shared/FeatureUnderConstruction';
 
-export default function Accounts() {
+export default function AccountsPage() {
   return <FeatureUnderConstruction featureName="Accounts" phase={2} />;
 }
