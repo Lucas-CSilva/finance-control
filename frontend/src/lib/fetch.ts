@@ -1,5 +1,5 @@
-import { getClientSideToken } from "@/services/auth/token.service";
-import { url } from "inspector";
+import { getClientSideToken } from '@/services/auth/token.service';
+import { API_BASE_URL } from './env';
 
 type FetchOptions = Omit<RequestInit, 'headers'> & {
     headers?: Record<string, string>
@@ -15,56 +15,56 @@ type FetchParameters = Omit<BaseFetchParameters, 'useAuth'>;
 
 async function baseFetch<T>({ url, options = {}, useAuth }: BaseFetchParameters): Promise<T> {
 
-    const headers: Record<string, string> = {};
+  const headers: Record<string, string> = {};
 
-    if (useAuth) {
-        const token = getClientSideToken();
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
+  if (useAuth) {
+    const token = getClientSideToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
+  }
 
-    const isFormData = options.body instanceof FormData;
-    if (isFormData) {
-        headers['Content-Type'] = 'application/json';
-    }
+  const isFormData = options.body instanceof FormData;
+  if (isFormData) {
+    headers['Content-Type'] = 'application/json';
+  }
 
-    const requestOptions: RequestInit = {
-        ...options,
-        headers: {
-            ...headers,
-            ...(options.headers || {}),
-        },
-    };
+  const requestOptions: RequestInit = {
+    ...options,
+    headers: {
+      ...headers,
+      ...(options.headers || {}),
+    },
+  };
 
-    const response = await fetch(`${API_BASE_URL}${url}`, requestOptions);
+  const response = await fetch(`${API_BASE_URL}${url}`, requestOptions);
 
-    if (!response.ok) {
-        const errorMessage = await extractErrorMessage(response);
-        throw new Error(errorMessage);
-    }
+  if (!response.ok) {
+    const errorMessage = await extractErrorMessage(response);
+    throw new Error(errorMessage);
+  }
 
-    if (response.status === 204) {
-        return undefined as T;
-    }
+  if (response.status === 204) {
+    return undefined as T;
+  }
 
-    return response.json();
+  return response.json();
 }
 
 
 async function extractErrorMessage(response: Response): Promise<string> {
-    try {
-        const data = await response.json();
-        return data?.message || response.statusText;
-    } catch {
-        return response.statusText;
-    }
+  try {
+    const data = await response.json();
+    return data?.message || response.statusText;
+  } catch {
+    return response.statusText;
+  }
 }
 
 export function fetchWithAuth<T>({ url, options = {} }: FetchParameters): Promise<T> {
-    return baseFetch<T>({ url: url, options: options, useAuth: true })
+  return baseFetch<T>({ url: url, options: options, useAuth: true });
 }
 
 export function fetchWithoutAuth<T>({ url, options = {} }: FetchParameters): Promise<T> {
-    return baseFetch<T>({ url: url, options: options, useAuth: false })
+  return baseFetch<T>({ url: url, options: options, useAuth: false });
 }

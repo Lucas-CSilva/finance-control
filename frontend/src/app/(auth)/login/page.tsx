@@ -40,13 +40,13 @@ export default function LoginPage() {
   const [loading, setLoading] = React.useState(false);
 
   const onSubmit = async (data: LoginSchemaType) => {
-      setLoading(true);
-      try {
-        await loginMutation.mutateAsync({email: data.email, password: data.password});
-        router.push('/dashboard');
-      } finally {
-        setLoading(false);
-      }
+    setLoading(true);
+    try {
+      await loginMutation.mutateAsync({email: data.email, password: data.password});
+      router.push('/dashboard');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

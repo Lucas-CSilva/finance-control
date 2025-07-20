@@ -17,7 +17,6 @@ import { PasswordField } from '@/components/auth/PasswordField';
 import Link from 'next/link';
 import { useRegister } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
 
 interface RegisterFormData {
   email: string;
