@@ -1,6 +1,6 @@
 import logger from '@/lib/logger';
 import { isPublicRoute, PROTECTED_ROUTE_REDIRECT, PUBLIC_ROUTE_REDIRECT } from '@/lib/routes';
-import { getTokenFromRequest } from '@/services/token.service';
+import { getTokenFromRequest } from '@/services/auth/token.service';
 import { NextRequest, NextResponse } from 'next/server';
 
 export default function middleware(request: NextRequest) {
@@ -27,11 +27,11 @@ export default function middleware(request: NextRequest) {
 
 export const config = {
   /*
-     * Faz o match de todas as rotas exceto:
-     * - /api (rotas de API)
-     * - /_next/static (arquivos estáticos)
-     * - /_next/image (arquivos de otimização de imagem)
-     * - /favicon.ico (ícone de favorito)
-    */
+       * Faz o match de todas as rotas exceto:
+       * - /api (rotas de API)
+       * - /_next/static (arquivos estáticos)
+       * - /_next/image (arquivos de otimização de imagem)
+       * - /favicon.ico (ícone de favorito)
+      */
   matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
 };
