@@ -15,6 +15,9 @@ import {
 } from '@mui/material';
 import { PasswordField } from '@/components/auth/PasswordField';
 import Link from 'next/link';
+import { useRegister } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
+import { useMutation } from '@tanstack/react-query';
 
 interface RegisterFormData {
   email: string;
@@ -38,6 +41,8 @@ export default function RegisterPage() {
     },
     mode: 'onChange',
   });
+  const router = useRouter();
+  const registerMutation = useRegister();
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirm, setShowConfirm] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -46,6 +51,13 @@ export default function RegisterPage() {
   const handleShowConfirm = () => setShowConfirm((prev) => !prev);
 
   const onSubmit = async (data: RegisterFormData) => {
+    setLoading(true);
+    try {
+      await registerMutation.mutateAsync({email: data.email, password: data.password});
+      router.push('/login');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (

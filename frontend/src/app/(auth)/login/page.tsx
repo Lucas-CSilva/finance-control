@@ -16,6 +16,8 @@ import {
   Link as MuiLink,
 } from '@mui/material';
 import { PasswordField } from '@/components/auth/PasswordField';
+import { useLogin } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
 
 export default function LoginPage() {
@@ -32,11 +34,19 @@ export default function LoginPage() {
     },
     mode: 'onSubmit',
   });
-  
+  const router = useRouter();
+  const loginMutation = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
   const onSubmit = async (data: LoginSchemaType) => {
+      setLoading(true);
+      try {
+        await loginMutation.mutateAsync({email: data.email, password: data.password});
+        router.push('/dashboard');
+      } finally {
+        setLoading(false);
+      }
   };
 
   return (
