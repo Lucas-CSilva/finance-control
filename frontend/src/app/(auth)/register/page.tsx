@@ -20,6 +20,7 @@ import { useRouter } from 'next/navigation';
 
 interface RegisterFormData {
   email: string;
+  name: string;
   password: string;
   confirmPassword: string;
   acceptTerms: boolean;
@@ -34,6 +35,7 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       email: '',
+      name: '',
       password: '',
       confirmPassword: '',
       acceptTerms: false,
@@ -52,7 +54,7 @@ export default function RegisterPage() {
   const onSubmit = async (data: RegisterFormData) => {
     setLoading(true);
     try {
-      await registerMutation.mutateAsync({email: data.email, password: data.password});
+      await registerMutation.mutateAsync({email: data.email, name: data.name, password: data.password});
       router.push('/login');
     } finally {
       setLoading(false);
@@ -106,6 +108,25 @@ export default function RegisterPage() {
                 helperText={errors.email?.message}
                 sx={{ borderRadius: 3 }}
                 autoComplete="email"
+              />
+            )}
+          />
+
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Name"
+                variant="outlined"
+                fullWidth
+                size="medium"
+                margin="normal"
+                error={!!errors.name}
+                helperText={errors.name?.message}
+                sx={{ borderRadius: 3 }}
+                autoComplete="name"
               />
             )}
           />

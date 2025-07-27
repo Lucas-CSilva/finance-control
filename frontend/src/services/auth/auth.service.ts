@@ -1,5 +1,5 @@
 import { fetchWithoutAuth } from '@/lib/fetch';
-import { LoginRequest, LoginResponse } from '@/types/auth';
+import { LoginRequest, LoginResponse, RegisterRequest } from '@/types/auth';
 
 export function login(data: LoginRequest): Promise<LoginResponse> {
   return fetchWithoutAuth({
@@ -11,7 +11,7 @@ export function login(data: LoginRequest): Promise<LoginResponse> {
   });
 }
 
-export function register(data: LoginRequest): Promise<void> {
+export function register(data: RegisterRequest): Promise<void> {
   return fetchWithoutAuth({
     url: '/api/auth/register',
     options: {
