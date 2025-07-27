@@ -2,13 +2,13 @@ import { getClientSideToken } from '@/services/auth/token.service';
 import { API_BASE_URL } from './env';
 
 type FetchOptions = Omit<RequestInit, 'headers'> & {
-    headers?: Record<string, string>
+  headers?: Record<string, string>
 }
 
 interface BaseFetchParameters {
-    url: string;
-    options: FetchOptions;
-    useAuth: boolean;
+  url: string;
+  options: FetchOptions;
+  useAuth: boolean;
 }
 
 type FetchParameters = Omit<BaseFetchParameters, 'useAuth'>;
@@ -25,7 +25,7 @@ async function baseFetch<T>({ url, options = {}, useAuth }: BaseFetchParameters)
   }
 
   const isFormData = options.body instanceof FormData;
-  if (isFormData) {
+  if (!isFormData) {
     headers['Content-Type'] = 'application/json';
   }
 
