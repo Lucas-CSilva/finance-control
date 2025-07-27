@@ -1,1 +1,30 @@
-spring.application.name=finance-control-api
+spring:
+  application:
+    name: finance-control-api
+  webflux:
+    base-path: /api
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+
+jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION:86400000}
+
+cors:
+  allowed-origins:
+    http://localhost:3000
+
+logging:
+  level:
+    root: INFO
+    com.lucascsilva.finance_control_api: DEBUG
+    org:
+      springframework:
+        security: DEBUG
+
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%15.15t] %-5level %-40.40logger{39} : %m%n"
+
+  file:
+    name: logs/finance-control-api.log
