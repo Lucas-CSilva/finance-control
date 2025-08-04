@@ -103,7 +103,7 @@ export default function LoginPage() {
             render={({ field }) => (
               <PasswordField
                 {...field}
-                label="Senha"
+                label="Password"
                 error={!!errors.password}
                 helperText={errors.password?.message}
                 showPassword={showPassword}
@@ -138,7 +138,7 @@ export default function LoginPage() {
               <span className="loader" style={{ width: 20, height: 20, border: '2px solid #fff', borderRadius: '50%', borderTop: '2px solid #3b82f6', animation: 'spin 1s linear infinite', display: 'inline-block' }} />
             ) : null}
           >
-            {loading ? 'Entrando...' : 'LOGIN'}
+            {loading ? 'Loggin in...' : 'LOGIN'}
           </Button>
         </form>
 
