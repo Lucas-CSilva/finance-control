@@ -7,7 +7,7 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class DomainException extends RuntimeException {
-  private ErrorCodesEnum errorCode;
+  private final ErrorCodesEnum errorCode;
 
   public DomainException(String message, ErrorCodesEnum errorCode) {
     super(message);
