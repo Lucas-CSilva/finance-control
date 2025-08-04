@@ -7,7 +7,7 @@ import theme from '@/styles/theme';
 import type { Metadata } from 'next';
 
 import './globals.css';
-import QueryProvier from '@/contexts/QueryProvider';
+import QueryProvider from '@/contexts/QueryProvider';
 import { Toaster } from 'sonner'; 
 
 export const metadata: Metadata = {
@@ -27,11 +27,11 @@ export default function RootLayout({
       >
         <AppRouterCacheProvider options={{ enableCssLayer: true }}>
           <ThemeProvider theme={theme}>
-            <QueryProvier>
+            <QueryProvider>
               <CssBaseline />
               <Toaster richColors position="bottom-right" closeButton />
               {children}
-            </QueryProvier>
+            </QueryProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
