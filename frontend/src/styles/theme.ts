@@ -35,6 +35,19 @@ const theme = createTheme({
     h5: { fontFamily: poppins.style.fontFamily, fontWeight: 500 },
     h6: { fontFamily: poppins.style.fontFamily, fontWeight: 500 },
   },
+  components: {
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: '12px',
+          '&.Mui-error .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#EF4444',
+            borderWidth: '2px',
+          },
+        },
+      },
+    },
+  }
 });
 
 export default theme;
