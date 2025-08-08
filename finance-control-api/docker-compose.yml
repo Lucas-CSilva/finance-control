@@ -8,6 +8,3 @@ services:
       MONGO_INITDB_DATABASE: finance-control
     ports:
       - "27017:27017"
-
-volumes:
-  db:
