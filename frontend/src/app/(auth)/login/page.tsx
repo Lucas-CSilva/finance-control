@@ -138,7 +138,7 @@ export default function LoginPage() {
               <span className="loader" style={{ width: 20, height: 20, border: '2px solid #fff', borderRadius: '50%', borderTop: '2px solid #3b82f6', animation: 'spin 1s linear infinite', display: 'inline-block' }} />
             ) : null}
           >
-            {loading ? 'Loggin in...' : 'LOGIN'}
+            {loading ? 'Logging in...' : 'LOGIN'}
           </Button>
         </form>
 

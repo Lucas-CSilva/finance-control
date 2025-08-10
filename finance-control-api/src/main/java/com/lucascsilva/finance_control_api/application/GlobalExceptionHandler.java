@@ -49,7 +49,7 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(Exception.class)
   public Mono<ResponseEntity<ErrorResponse>> handleGenericException(Exception ex) {
-    log.error("Internal server error: {}, stack: {}", ex.getMessage(), ex.getStackTrace());
+    log.error("Internal server error: {}", ex.getMessage(), ex);
     return Mono.just(
         ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(

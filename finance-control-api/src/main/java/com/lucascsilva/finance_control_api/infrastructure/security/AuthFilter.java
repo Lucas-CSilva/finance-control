@@ -3,7 +3,9 @@ package com.lucascsilva.finance_control_api.infrastructure.security;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
@@ -28,23 +30,31 @@ public class AuthFilter implements WebFilter {
     String token = authHeader.substring(7);
     String email = tokenService.extractUsername(token);
 
-    if (email == null || ReactiveSecurityContextHolder.getContext() != null) {
+    if (email == null) {
       return chain.filter(exchange);
     }
 
-    return userDetailsService
-        .findByUsername(email)
+    Mono<Authentication> authenticationMono =
+        ReactiveSecurityContextHolder.getContext()
+            .map(SecurityContext::getAuthentication)
+            .filter(Authentication::isAuthenticated)
+            .switchIfEmpty(
+                Mono.defer(
+                    () ->
+                        userDetailsService
+                            .findByUsername(email)
+                            .filter(userDetails -> tokenService.validateToken(token))
+                            .map(
+                                userDetails ->
+                                    new UsernamePasswordAuthenticationToken(
+                                        userDetails, null, userDetails.getAuthorities()))));
+
+    return authenticationMono
         .flatMap(
-            userDetails -> {
-              if (tokenService.validateToken(token)) {
-                UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                return chain
+            authentication ->
+                chain
                     .filter(exchange)
-                    .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication));
-              }
-              return chain.filter(exchange);
-            });
+                    .contextWrite(ReactiveSecurityContextHolder.withAuthentication(authentication)))
+        .switchIfEmpty(chain.filter(exchange));
   }
 }

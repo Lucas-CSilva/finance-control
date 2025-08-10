@@ -5,6 +5,7 @@ import com.lucascsilva.finance_control_api.application.dtos.auth.LoginResponseDt
 import com.lucascsilva.finance_control_api.application.dtos.auth.RegisterRequestDto;
 import com.lucascsilva.finance_control_api.application.mappers.LoginResponseMapper;
 import com.lucascsilva.finance_control_api.domain.ports.input.AuthPort;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,14 +25,15 @@ public class AuthController {
   private final LoginResponseMapper loginResponseMapper;
 
   @PostMapping(value = "/login")
-  public Mono<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequest) {
+  public Mono<LoginResponseDto> login(@RequestBody @Valid LoginRequestDto loginRequest) {
     return authPort
         .login(loginRequest.email(), loginRequest.password())
         .map(loginResponseMapper::toDto);
   }
 
   @PostMapping(value = "/register")
-  public Mono<ResponseEntity<Void>> register(@RequestBody RegisterRequestDto registerRequest) {
+  public Mono<ResponseEntity<Void>> register(
+      @RequestBody @Valid RegisterRequestDto registerRequest) {
     log.info("Registering user with email: {}", registerRequest.email());
     return authPort
         .register(registerRequest.email(), registerRequest.name(), registerRequest.password())
