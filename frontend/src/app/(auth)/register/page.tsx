@@ -1,7 +1,213 @@
 'use client';
+import React from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { registerSchema, RegisterSchemaType } from './zodSchema';
+import { useForm, Controller } from 'react-hook-form';
+import {
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  Button,
+  Link as MuiLink
+} from '@mui/material';
+import { PasswordField } from '@/components/auth/PasswordField';
+import Link from 'next/link';
+import { useRegister } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
 
-import { FeatureUnderConstruction } from '@/components/shared/FeatureUnderConstruction';
+interface RegisterFormData {
+  email: string;
+  name: string;
+  password: string;
+  confirmPassword: string;
+  acceptTerms: boolean;
+}
 
 export default function RegisterPage() {
-  return <FeatureUnderConstruction featureName="Register" phase={1} />;
+  const {
+    handleSubmit,
+    control,
+    formState: { errors, isValid },
+  } = useForm<RegisterSchemaType>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      name: '',
+      password: '',
+      confirmPassword: '',
+      acceptTerms: false,
+    },
+    mode: 'onChange',
+  });
+  const router = useRouter();
+  const registerMutation = useRegister();
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirm, setShowConfirm] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
+  const handleShowPassword = () => setShowPassword((prev) => !prev);
+  const handleShowConfirm = () => setShowConfirm((prev) => !prev);
+
+  const onSubmit = async (data: RegisterFormData) => {
+    setLoading(true);
+    try {
+      await registerMutation.mutateAsync({email: data.email, name: data.name, password: data.password});
+      router.push('/login');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      minHeight="100vh"
+      bgcolor="#f5f5f5"
+      px={2}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          p: 6,
+          width: { xs: '100%', sm: 400 },
+          maxWidth: 500,
+          borderRadius: 4,
+        }}
+      >
+        {/* Logo */}
+        <Box textAlign="center" mb={3}>
+        </Box>
+
+        {/* Title */}
+        <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
+          Create an account
+        </Typography>
+        <Typography variant="body1" align="center" color="textSecondary" mb={4}>
+          Please enter your details to register.
+        </Typography>
+
+        {/* Form */}
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Email"
+                variant="outlined"
+                fullWidth
+                size="medium"
+                margin="normal"
+                error={!!errors.email}
+                helperText={errors.email?.message}
+                sx={{ borderRadius: 3 }}
+                autoComplete="email"
+              />
+            )}
+          />
+
+          <Controller
+            name="name"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label="Name"
+                variant="outlined"
+                fullWidth
+                size="medium"
+                margin="normal"
+                error={!!errors.name}
+                helperText={errors.name?.message}
+                sx={{ borderRadius: 3 }}
+                autoComplete="name"
+              />
+            )}
+          />
+
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <PasswordField
+                {...field}
+                label="Password"
+                error={!!errors.password}
+                helperText={errors.password?.message}
+                showPassword={showPassword}
+                setShowPassword={handleShowPassword}
+                autoComplete="new-password"
+              />
+            )}
+          />
+
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field }) => (
+              <PasswordField
+                {...field}
+                label="Confirm Password"
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
+                showPassword={showConfirm}
+                setShowPassword={handleShowConfirm}
+                autoComplete="new-password"
+              />
+            )}
+          />
+
+          <Controller
+            name="acceptTerms"
+            control={control}
+            render={({ field }) => (
+              <FormControlLabel
+                sx={{ mt: 2 }}
+                control={<Checkbox {...field} checked={field.value} size="small" />}
+                label={
+                  <Typography variant="body2">
+                    I accept{' '}
+                    <MuiLink component={Link} href="/terms" underline="always" target="_blank" rel="noopener">
+                      Terms and Conditions
+                    </MuiLink>
+                  </Typography>
+                }
+              />
+            )}
+          />
+          {errors.acceptTerms && (
+            <Typography variant="caption" color="error" sx={{ ml: 1 }}>
+              {errors.acceptTerms.message}
+            </Typography>
+          )}
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 3, py: 1.75, borderRadius: 3 }}
+            disabled={!isValid || loading}
+          >
+            {loading ? 'Creating...' : 'Create an account'}
+          </Button>
+        </form>
+        
+        {/* Login link */}
+        <Box textAlign="center" mt={4}>
+          <Typography variant="body2">
+            Already have an account?{' '}
+            <MuiLink component={Link} href="/login" underline="none" fontWeight={600}>
+              Login
+            </MuiLink>
+          </Typography>
+        </Box>
+      </Paper>
+    </Box>
+  );
 }
