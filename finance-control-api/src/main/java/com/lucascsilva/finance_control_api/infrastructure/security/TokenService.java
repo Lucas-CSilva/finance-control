@@ -1,19 +1,20 @@
 package com.lucascsilva.finance_control_api.infrastructure.security;
 
-import com.lucascsilva.finance_control_api.domain.models.User;
+import com.lucascsilva.finance_control_api.domain.ports.output.TokenPort;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import java.nio.charset.StandardCharsets;
-import java.util.Date;
+import jakarta.annotation.PostConstruct;
+import java.util.*;
 import java.util.function.Function;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TokenService {
+public class TokenService implements TokenPort {
 
   @Value("${jwt.secret}")
   private String jwtSecret;
@@ -21,47 +22,62 @@ public class TokenService {
   @Value("${jwt.expiration}")
   private long jwtExpiration;
 
-  private SecretKey getSigningKey() {
-    byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
-    return Keys.hmacShaKeyFor(keyBytes);
+  private SecretKey key;
+
+  @PostConstruct
+  public void init() {
+    this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
   }
 
-  public String generateToken(User user) {
+  @Override
+  public String generateToken(UserDetails userDetails) {
+    Map<String, Object> claims = new HashMap<>();
+    List<String> roles =
+        userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+    claims.put("roles", roles);
+
     return Jwts.builder()
-        .setSubject(user.email())
-        .setIssuedAt(new Date(System.currentTimeMillis()))
+        .setClaims(claims)
+        .setSubject(userDetails.getUsername())
+        .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-        .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+        .signWith(key)
         .compact();
   }
 
-  private Claims extractClaims(String token) {
-    return Jwts.parserBuilder()
-        .setSigningKey(getSigningKey())
-        .build()
-        .parseClaimsJws(token)
-        .getBody();
+  @Override
+  public boolean validateToken(String token) {
+    try {
+      Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+      return !isTokenExpired(token);
+    } catch (Exception ex) {
+      return false;
+    }
   }
 
-  public String getEmailFromToken(String token) {
+  public String extractUsername(String token) {
     return extractClaim(token, Claims::getSubject);
   }
 
-  public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-    Claims claims = extractClaims(token);
+  public List<String> extractRoles(String token) {
+    Object rolesObj = extractClaim(token, claims -> claims.get("roles"));
+    if (rolesObj instanceof List<?> rolesList) {
+      return rolesList.stream().filter(Objects::nonNull).map(Object::toString).toList();
+    }
+    return Collections.emptyList();
+  }
+
+  private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    final Claims claims = extractAllClaims(token);
     return claimsResolver.apply(claims);
   }
 
-  public Date extractExpiration(String token) {
-    return extractClaim(token, Claims::getExpiration);
+  private Claims extractAllClaims(String token) {
+    return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
   }
 
-  public Boolean isTokenExpired(String token) {
-    return extractExpiration(token).before(new Date());
-  }
-
-  public Boolean validateToken(String token, String email) {
-    final String tokenEmail = getEmailFromToken(token);
-    return tokenEmail.equals(email) && !isTokenExpired(token);
+  private Boolean isTokenExpired(String token) {
+    final Date expiration = extractClaim(token, Claims::getExpiration);
+    return expiration.before(new Date());
   }
 }

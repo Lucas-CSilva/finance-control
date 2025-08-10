@@ -15,7 +15,7 @@ import reactor.core.publisher.Mono;
 public class AuthFilter implements WebFilter {
 
   private final TokenService tokenService;
-  private final UserDetailsService userDetailsService;
+  private final UserDetailsServiceImpl userDetailsService;
 
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -26,7 +26,7 @@ public class AuthFilter implements WebFilter {
     }
 
     String token = authHeader.substring(7);
-    String email = tokenService.getEmailFromToken(token);
+    String email = tokenService.extractUsername(token);
 
     if (email == null || ReactiveSecurityContextHolder.getContext() != null) {
       return chain.filter(exchange);
@@ -36,7 +36,7 @@ public class AuthFilter implements WebFilter {
         .findByUsername(email)
         .flatMap(
             userDetails -> {
-              if (tokenService.validateToken(token, userDetails.getUsername())) {
+              if (tokenService.validateToken(token)) {
                 UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());

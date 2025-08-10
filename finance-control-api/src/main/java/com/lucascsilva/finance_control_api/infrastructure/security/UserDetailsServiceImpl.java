@@ -1,24 +1,23 @@
 package com.lucascsilva.finance_control_api.infrastructure.security;
 
-import com.lucascsilva.finance_control_api.domain.ports.output.UserRepositoryPort;
-import java.util.Collections;
+import com.lucascsilva.finance_control_api.infrastructure.mongo.repositories.UserMongoRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
+@Slf4j
 @Service
 @AllArgsConstructor
-public class UserDetailsService implements ReactiveUserDetailsService {
+public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
 
-  private final UserRepositoryPort userRepository;
+  private final UserMongoRepository userRepository;
 
   @Override
   public Mono<UserDetails> findByUsername(String username) {
-    return userRepository
-        .findByEmail(username)
-        .map(user -> new User(user.email(), user.password(), Collections.emptyList()));
+    log.info("Finding user by username: {}", username);
+    return userRepository.findByEmail(username).cast(UserDetails.class);
   }
 }

@@ -1,6 +1,8 @@
 package com.lucascsilva.finance_control_api.infrastructure.configurations;
 
 import com.lucascsilva.finance_control_api.infrastructure.security.AuthFilter;
+import com.lucascsilva.finance_control_api.infrastructure.security.AuthenticationManager;
+import com.lucascsilva.finance_control_api.infrastructure.security.SecurityContextRepository;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
@@ -23,14 +22,11 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 public class SecurityConfig {
 
   private final AuthFilter authFilter;
+  private final SecurityContextRepository securityContextRepository;
+  private final AuthenticationManager authenticationManager;
 
   @Value("${cors.allowed-origins}")
   private List<String> allowedOrigins;
-
-  @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder();
-  }
 
   @Bean
   CorsConfigurationSource corsConfigurationSource() {
@@ -48,7 +44,8 @@ public class SecurityConfig {
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
     return http.cors(corsSpec -> corsSpec.configurationSource(corsConfigurationSource()))
         .csrf(ServerHttpSecurity.CsrfSpec::disable)
-        .securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+        .authenticationManager(authenticationManager)
+        .securityContextRepository(securityContextRepository)
         .authorizeExchange(
             exchanges ->
                 exchanges.pathMatchers("/auth/**").permitAll().anyExchange().authenticated())
