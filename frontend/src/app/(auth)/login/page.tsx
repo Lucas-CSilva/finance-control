@@ -14,6 +14,7 @@ import {
   Button,
   Divider,
   Link as MuiLink,
+  CircularProgress,
 } from '@mui/material';
 import { PasswordField } from '@/components/auth/PasswordField';
 import { useLogin } from '@/hooks/useAuth';
@@ -38,6 +39,8 @@ export default function LoginPage() {
   const loginMutation = useLogin();
   const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
+
+  const handleShowPassword = () => setShowPassword((prev) => !prev);
 
   const onSubmit = async (data: LoginSchemaType) => {
     setLoading(true);
@@ -107,7 +110,7 @@ export default function LoginPage() {
                 error={!!errors.password}
                 helperText={errors.password?.message}
                 showPassword={showPassword}
-                setShowPassword={setShowPassword}
+                setShowPassword={handleShowPassword}
               />
             )}
           />
@@ -135,7 +138,7 @@ export default function LoginPage() {
             sx={{ mt: 1, py: 1.75, borderRadius: 3 }}
             disabled={loading}
             startIcon={loading ? (
-              <span className="loader" style={{ width: 20, height: 20, border: '2px solid #fff', borderRadius: '50%', borderTop: '2px solid #3b82f6', animation: 'spin 1s linear infinite', display: 'inline-block' }} />
+              <CircularProgress size={20} color="inherit" />
             ) : null}
           >
             {loading ? 'Logging in...' : 'LOGIN'}
