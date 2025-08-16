@@ -19,6 +19,7 @@ import {
 import { PasswordField } from '@/components/auth/PasswordField';
 import { useLogin } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/contexts/UserProvider';
 
 
 export default function LoginPage() {
@@ -41,11 +42,13 @@ export default function LoginPage() {
   const [loading, setLoading] = React.useState(false);
 
   const handleShowPassword = () => setShowPassword((prev) => !prev);
+  const { setUser } = useUser();
 
   const onSubmit = async (data: LoginSchemaType) => {
     setLoading(true);
     try {
-      await loginMutation.mutateAsync({email: data.email, password: data.password});
+      const response = await loginMutation.mutateAsync({email: data.email, password: data.password});
+      setUser(response.user);
       router.push('/dashboard');
     } finally {
       setLoading(false);
