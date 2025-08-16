@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { registerSchema, RegisterSchemaType } from './zodSchema';
+import { registerSchema, RegisterSchemaType } from './register.schema';
 import { useForm, Controller } from 'react-hook-form';
 import {
   Box,
