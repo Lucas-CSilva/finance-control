@@ -17,6 +17,7 @@ import { PasswordField } from '@/components/auth/PasswordField';
 import Link from 'next/link';
 import { useRegister } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
+import { ClientOnly } from '@/components/shared/ClientOnly';
 
 interface RegisterFormData {
   email: string;
@@ -62,152 +63,154 @@ export default function RegisterPage() {
   };
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh"
-      bgcolor="#f5f5f5"
-      px={2}
-    >
-      <Paper
-        elevation={3}
-        sx={{
-          p: 6,
-          width: { xs: '100%', sm: 400 },
-          maxWidth: 500,
-          borderRadius: 4,
-        }}
+    <ClientOnly>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        bgcolor="#f5f5f5"
+        px={2}
       >
-        {/* Logo */}
-        <Box textAlign="center" mb={3}>
-        </Box>
+        <Paper
+          elevation={3}
+          sx={{
+            p: 6,
+            width: { xs: '100%', sm: 400 },
+            maxWidth: 500,
+            borderRadius: 4,
+          }}
+        >
+          {/* Logo */}
+          <Box textAlign="center" mb={3}>
+          </Box>
 
-        {/* Title */}
-        <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
+          {/* Title */}
+          <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
           Create an account
-        </Typography>
-        <Typography variant="body1" align="center" color="textSecondary" mb={4}>
-          Please enter your details to register.
-        </Typography>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Email"
-                variant="outlined"
-                fullWidth
-                size="medium"
-                margin="normal"
-                error={!!errors.email}
-                helperText={errors.email?.message}
-                sx={{ borderRadius: 3 }}
-                autoComplete="email"
-              />
-            )}
-          />
-
-          <Controller
-            name="name"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Name"
-                variant="outlined"
-                fullWidth
-                size="medium"
-                margin="normal"
-                error={!!errors.name}
-                helperText={errors.name?.message}
-                sx={{ borderRadius: 3 }}
-                autoComplete="name"
-              />
-            )}
-          />
-
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <PasswordField
-                {...field}
-                label="Password"
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                showPassword={showPassword}
-                setShowPassword={handleShowPassword}
-                autoComplete="new-password"
-              />
-            )}
-          />
-
-          <Controller
-            name="confirmPassword"
-            control={control}
-            render={({ field }) => (
-              <PasswordField
-                {...field}
-                label="Confirm Password"
-                error={!!errors.confirmPassword}
-                helperText={errors.confirmPassword?.message}
-                showPassword={showConfirm}
-                setShowPassword={handleShowConfirm}
-                autoComplete="new-password"
-              />
-            )}
-          />
-
-          <Controller
-            name="acceptTerms"
-            control={control}
-            render={({ field }) => (
-              <FormControlLabel
-                sx={{ mt: 2 }}
-                control={<Checkbox {...field} checked={field.value} size="small" />}
-                label={
-                  <Typography variant="body2">
-                    I accept{' '}
-                    <MuiLink component={Link} href="/terms" underline="always" target="_blank" rel="noopener">
-                      Terms and Conditions
-                    </MuiLink>
-                  </Typography>
-                }
-              />
-            )}
-          />
-          {errors.acceptTerms && (
-            <Typography variant="caption" color="error" sx={{ ml: 1 }}>
-              {errors.acceptTerms.message}
-            </Typography>
-          )}
-
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 3, py: 1.75, borderRadius: 3 }}
-            disabled={!isValid || loading}
-          >
-            {loading ? 'Creating...' : 'Create an account'}
-          </Button>
-        </form>
-        
-        {/* Login link */}
-        <Box textAlign="center" mt={4}>
-          <Typography variant="body2">
-            Already have an account?{' '}
-            <MuiLink component={Link} href="/login" underline="none" fontWeight={600}>
-              Login
-            </MuiLink>
           </Typography>
-        </Box>
-      </Paper>
-    </Box>
+          <Typography variant="body1" align="center" color="textSecondary" mb={4}>
+          Please enter your details to register.
+          </Typography>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  size="medium"
+                  margin="normal"
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
+                  sx={{ borderRadius: 3 }}
+                  autoComplete="email"
+                />
+              )}
+            />
+
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Name"
+                  variant="outlined"
+                  fullWidth
+                  size="medium"
+                  margin="normal"
+                  error={!!errors.name}
+                  helperText={errors.name?.message}
+                  sx={{ borderRadius: 3 }}
+                  autoComplete="name"
+                />
+              )}
+            />
+
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <PasswordField
+                  {...field}
+                  label="Password"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  showPassword={showPassword}
+                  setShowPassword={handleShowPassword}
+                  autoComplete="new-password"
+                />
+              )}
+            />
+
+            <Controller
+              name="confirmPassword"
+              control={control}
+              render={({ field }) => (
+                <PasswordField
+                  {...field}
+                  label="Confirm Password"
+                  error={!!errors.confirmPassword}
+                  helperText={errors.confirmPassword?.message}
+                  showPassword={showConfirm}
+                  setShowPassword={handleShowConfirm}
+                  autoComplete="new-password"
+                />
+              )}
+            />
+
+            <Controller
+              name="acceptTerms"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  sx={{ mt: 2 }}
+                  control={<Checkbox {...field} checked={field.value} size="small" />}
+                  label={
+                    <Typography variant="body2">
+                    I accept{' '}
+                      <MuiLink component={Link} href="/terms" underline="always" target="_blank" rel="noopener">
+                      Terms and Conditions
+                      </MuiLink>
+                    </Typography>
+                  }
+                />
+              )}
+            />
+            {errors.acceptTerms && (
+              <Typography variant="caption" color="error" sx={{ ml: 1 }}>
+                {errors.acceptTerms.message}
+              </Typography>
+            )}
+
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{ mt: 3, py: 1.75, borderRadius: 3 }}
+              disabled={!isValid || loading}
+            >
+              {loading ? 'Creating...' : 'Create an account'}
+            </Button>
+          </form>
+        
+          {/* Login link */}
+          <Box textAlign="center" mt={4}>
+            <Typography variant="body2">
+            Already have an account?{' '}
+              <MuiLink component={Link} href="/login" underline="none" fontWeight={600}>
+              Login
+              </MuiLink>
+            </Typography>
+          </Box>
+        </Paper>
+      </Box>
+    </ClientOnly>
   );
 }

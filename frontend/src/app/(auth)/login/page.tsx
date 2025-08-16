@@ -20,6 +20,7 @@ import { PasswordField } from '@/components/auth/PasswordField';
 import { useLogin } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
 import { useUser } from '@/contexts/UserProvider';
+import { ClientOnly } from '@/components/shared/ClientOnly';
 
 
 export default function LoginPage() {
@@ -56,127 +57,129 @@ export default function LoginPage() {
   };
 
   return (
-    <Box
-      display="flex"
-      justifyContent="center"
-      alignItems="center"
-      minHeight="100vh"
-      bgcolor="#f5f5f5"
-      px={2}
-    >
-      <Paper
-        elevation={3}
-        sx={{
-          p: 6,
-          width: { xs: '100%', sm: 400 },
-          maxWidth: 500,
-          borderRadius: 4,
-        }}
+    <ClientOnly>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="100vh"
+        bgcolor="#f5f5f5"
+        px={2}
       >
-        <Box textAlign="center" mb={3}>
-        </Box>
+        <Paper
+          elevation={3}
+          sx={{
+            p: 6,
+            width: { xs: '100%', sm: 400 },
+            maxWidth: 500,
+            borderRadius: 4,
+          }}
+        >
+          <Box textAlign="center" mb={3}>
+          </Box>
 
-        {/* Title */}
-        <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
+          {/* Title */}
+          <Typography variant="h4" align="center" fontWeight={700} gutterBottom>
           Welcome back
-        </Typography>
-        <Typography variant="body1" align="center" color="textSecondary" mb={4}>
+          </Typography>
+          <Typography variant="body1" align="center" color="textSecondary" mb={4}>
           Please enter your details to login.
-        </Typography>
+          </Typography>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Controller
-            name="email"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label="Email"
-                variant="outlined"
-                fullWidth
-                size="medium"
-                margin="normal"
-                error={!!errors.email}
-                helperText={errors.email?.message}
-              />
-            )}
-          />
-
-          <Controller
-            name="password"
-            control={control}
-            render={({ field }) => (
-              <PasswordField
-                {...field}
-                label="Password"
-                error={!!errors.password}
-                helperText={errors.password?.message}
-                showPassword={showPassword}
-                setShowPassword={handleShowPassword}
-              />
-            )}
-          />
-
-          <Box display="flex" justifyContent="space-between" alignItems="center" mt={2} mb={3}>
+          {/* Form */}
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <Controller
-              name="remember"
+              name="email"
               control={control}
               render={({ field }) => (
-                <FormControlLabel
-                  control={<Checkbox {...field} checked={field.value} size="small" />}
-                  label="Remember me"
+                <TextField
+                  {...field}
+                  label="Email"
+                  variant="outlined"
+                  fullWidth
+                  size="medium"
+                  margin="normal"
+                  error={!!errors.email}
+                  helperText={errors.email?.message}
                 />
               )}
             />
-            <MuiLink href="#" underline="none" variant="body2">
+
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <PasswordField
+                  {...field}
+                  label="Password"
+                  error={!!errors.password}
+                  helperText={errors.password?.message}
+                  showPassword={showPassword}
+                  setShowPassword={handleShowPassword}
+                />
+              )}
+            />
+
+            <Box display="flex" justifyContent="space-between" alignItems="center" mt={2} mb={3}>
+              <Controller
+                name="remember"
+                control={control}
+                render={({ field }) => (
+                  <FormControlLabel
+                    control={<Checkbox {...field} checked={field.value} size="small" />}
+                    label="Remember me"
+                  />
+                )}
+              />
+              <MuiLink href="#" underline="none" variant="body2">
               Forgot password?
-            </MuiLink>
-          </Box>
+              </MuiLink>
+            </Box>
 
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{ mt: 1, py: 1.75, borderRadius: 3 }}
+              disabled={loading}
+              startIcon={loading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : null}
+            >
+              {loading ? 'Logging in...' : 'LOGIN'}
+            </Button>
+          </form>
+
+          {/* Or divider */}
+          <Divider sx={{ my: 4, borderRadius: 2 }}>OR</Divider>
+
+          {/* Social buttons */}
           <Button
-            type="submit"
-            variant="contained"
+            variant="outlined"
             fullWidth
-            sx={{ mt: 1, py: 1.75, borderRadius: 3 }}
-            disabled={loading}
-            startIcon={loading ? (
-              <CircularProgress size={20} color="inherit" />
-            ) : null}
+            sx={{ mb: 2, textTransform: 'none', borderRadius: 3 }}
           >
-            {loading ? 'Logging in...' : 'LOGIN'}
-          </Button>
-        </form>
-
-        {/* Or divider */}
-        <Divider sx={{ my: 4, borderRadius: 2 }}>OR</Divider>
-
-        {/* Social buttons */}
-        <Button
-          variant="outlined"
-          fullWidth
-          sx={{ mb: 2, textTransform: 'none', borderRadius: 3 }}
-        >
           Continue with Apple
-        </Button>
-        <Button
-          variant="outlined"
-          fullWidth
-          sx={{ textTransform: 'none', borderRadius: 3 }}
-        >
+          </Button>
+          <Button
+            variant="outlined"
+            fullWidth
+            sx={{ textTransform: 'none', borderRadius: 3 }}
+          >
           Continue with Google
-        </Button>
+          </Button>
 
-        {/* Register link */}
-        <Box textAlign="center" mt={4}>
-          <Typography variant="body2">
+          {/* Register link */}
+          <Box textAlign="center" mt={4}>
+            <Typography variant="body2">
             Don&apos;t have an account?{' '}
-            <MuiLink href="/register" underline="none" fontWeight={600}>
+              <MuiLink href="/register" underline="none" fontWeight={600}>
               Register
-            </MuiLink>
-          </Typography>
-        </Box>
-      </Paper>
-    </Box>
+              </MuiLink>
+            </Typography>
+          </Box>
+        </Paper>
+      </Box>
+    </ClientOnly>
   );
 }
