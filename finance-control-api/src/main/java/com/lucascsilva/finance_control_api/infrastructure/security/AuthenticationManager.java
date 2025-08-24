@@ -1,7 +1,6 @@
 package com.lucascsilva.finance_control_api.infrastructure.security;
 
-import com.lucascsilva.finance_control_api.domain.exceptions.DomainException;
-import com.lucascsilva.finance_control_api.domain.exceptions.enums.ErrorCodesEnum;
+import com.lucascsilva.finance_control_api.domain.exceptions.InvalidCredentialsException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -29,19 +28,19 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
   }
 
   private Mono<UserDetails> verifyAuthentication(Authentication authentication) {
+
     String username = authentication.getName();
     String password = authentication.getCredentials().toString();
 
     return userDetailsService
         .findByUsername(username)
+        .switchIfEmpty(Mono.error(new InvalidCredentialsException()))
         .flatMap(
             userDetails -> {
               log.info("Verifying authentication for user: {}", username);
               return passwordEncoder.matches(password, userDetails.getPassword())
                   ? Mono.just(userDetails)
-                  : Mono.error(
-                      new DomainException(
-                          "Invalid email or password", ErrorCodesEnum.INVALID_CREDENTIALS));
+                  : Mono.error(new InvalidCredentialsException());
             });
   }
 

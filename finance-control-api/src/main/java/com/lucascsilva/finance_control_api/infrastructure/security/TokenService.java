@@ -5,7 +5,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.Function;
@@ -33,18 +32,22 @@ public class TokenService implements TokenPort {
 
   @Override
   public String generateToken(UserDetails userDetails) {
-    Map<String, Object> claims = new HashMap<>();
-    List<String> roles =
-        userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-    claims.put("roles", roles);
-
     return Jwts.builder()
-        .setClaims(claims)
+        .setClaims(generateClaims(userDetails))
         .setSubject(userDetails.getUsername())
         .setIssuedAt(new Date())
         .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
         .signWith(key)
         .compact();
+  }
+
+  private Map<String, Object> generateClaims(UserDetails userDetails) {
+    Map<String, Object> claims = new HashMap<>();
+    List<String> roles =
+        userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+
+    claims.put("roles", roles);
+    return claims;
   }
 
   @Override
