@@ -1,5 +1,6 @@
 'use client';
 
+import { removeClientSideToken } from '@/services/auth/token.service';
 import { User } from '@/types/user';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
@@ -24,7 +25,10 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     else localStorage.removeItem('user');
   }, [user]);
 
-  const logout = () => setUser(null);
+  const logout = () => {
+    setUser(null);
+    removeClientSideToken();
+  }
 
   return (
     <UserContext.Provider value={{ user, setUser, logout }}>

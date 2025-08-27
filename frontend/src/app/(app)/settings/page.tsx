@@ -28,7 +28,10 @@ export default function SettingsPage() {
     if (user) {
       reset({
         name: user.name,
-        email: user.email
+        email: user.email,
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
       });
     }
   }, [user, reset]);
@@ -40,14 +43,12 @@ export default function SettingsPage() {
   const updateSettingsMutation = useUpdateSettings();
 
   const onSubmit = async (data: SettingsSchemaType) => {
-    const updatedUser = await updateSettingsMutation.mutateAsync({
-      userId: user!.id,
-      data: {
+    const updatedUser = await updateSettingsMutation.mutateAsync(
+      {
         name: data.name,
         currentPassword: data.currentPassword || null,
         newPassword: data.newPassword || null
-      }
-    });
+      });
     setUser(updatedUser);
   };
 
