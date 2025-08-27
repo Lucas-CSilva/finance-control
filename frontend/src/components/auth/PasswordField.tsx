@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { TextField, TextFieldProps, InputAdornment, IconButton } from '@mui/material';
 import { Eye, EyeOff } from 'lucide-react';
@@ -31,8 +33,7 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
                 {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
               </IconButton>
             </InputAdornment>
-          ),
-          suppressHydrationWarning: true,
+          )
         }
       }}
     />

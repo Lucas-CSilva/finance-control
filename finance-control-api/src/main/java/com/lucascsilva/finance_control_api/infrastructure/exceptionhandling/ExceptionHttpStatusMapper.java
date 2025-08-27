@@ -11,7 +11,10 @@ public class ExceptionHttpStatusMapper {
       Map.of(
           ErrorCodesEnum.INVALID_CREDENTIALS, HttpStatus.UNAUTHORIZED,
           ErrorCodesEnum.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR,
-          ErrorCodesEnum.UNSUPPORTED_MEDIA_TYPE, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+          ErrorCodesEnum.UNSUPPORTED_MEDIA_TYPE, HttpStatus.UNSUPPORTED_MEDIA_TYPE,
+          ErrorCodesEnum.ACCESS_DENIED, HttpStatus.FORBIDDEN,
+          ErrorCodesEnum.RESOURCE_NOT_FOUND, HttpStatus.NOT_FOUND,
+          ErrorCodesEnum.VALIDATION_ERROR, HttpStatus.BAD_REQUEST);
 
   public HttpStatus getHttpStatus(ErrorCodesEnum errorCode) {
     return errorCodeToHttpStatusMap.getOrDefault(errorCode, HttpStatus.BAD_REQUEST);

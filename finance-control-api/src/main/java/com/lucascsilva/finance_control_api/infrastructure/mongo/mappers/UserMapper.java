@@ -2,6 +2,7 @@ package com.lucascsilva.finance_control_api.infrastructure.mongo.mappers;
 
 import com.lucascsilva.finance_control_api.domain.models.User;
 import com.lucascsilva.finance_control_api.infrastructure.mongo.documents.UserDocument;
+import com.lucascsilva.finance_control_api.infrastructure.security.UserDetailsImpl;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -12,4 +13,7 @@ public interface UserMapper {
   @Mapping(target = "createdAt", ignore = true)
   @Mapping(target = "updatedAt", ignore = true)
   UserDocument toDocument(User user);
+
+  @Mapping(target = "authorities", ignore = true)
+  UserDetailsImpl toUserDetails(UserDocument userDocument);
 }
