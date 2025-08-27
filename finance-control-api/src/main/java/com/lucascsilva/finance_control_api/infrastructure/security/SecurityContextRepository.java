@@ -1,5 +1,6 @@
 package com.lucascsilva.finance_control_api.infrastructure.security;
 
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -40,7 +41,13 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
     if (!tokenService.validateToken(token)) {
       return Mono.empty();
     }
+
     String username = tokenService.extractUsername(token);
+
+    if (StringUtils.isBlank(username)) {
+      return Mono.empty();
+    }
+
     return Mono.just(username);
   }
 
